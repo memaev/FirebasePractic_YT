@@ -15,6 +15,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -23,6 +25,8 @@ public class RegisterActivity extends AppCompatActivity {
     private Button btn_register;
 
     private FirebaseAuth mAuth;
+    private DatabaseReference ref;
+    private FirebaseDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,10 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        ref = database.getReference();
+
+
         email_register = findViewById(R.id.email_register);
         password_register = findViewById(R.id.password_register);
         btn_register = findViewById(R.id.btn_register);
@@ -45,6 +53,9 @@ public class RegisterActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()){
+                                        ref.child("Users").child(mAuth.getCurrentUser().getUid()).child("email").setValue(email_register.getText().toString());
+                                        ref.child("Users").child(mAuth.getCurrentUser().getUid()).child("password").setValue(password_register.getText().toString());
+
                                         Intent intent = new Intent (RegisterActivity.this, MainActivity.class);
                                         startActivity(intent);
                                     }else{
